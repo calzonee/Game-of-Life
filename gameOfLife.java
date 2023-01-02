@@ -41,6 +41,43 @@ public class gameOfLife {
         }
     }
 
+    // Method will contain rules of Life
+    public static boolean[][] nextGen(boolean[][] grid, int row, int col) {
+        boolean[][] futureGen = newBooleanGrid(row, col);
+        for (int iG = 0; iG < grid.length; ++iG) {
+            for (int jG = 0; jG < grid[row-1].length; ++jG) {
+                // iN indexes through the 3x3 neighbourhood
+                int countLife = 0;
+                for (int iN = -1; iN < 2; ++iN) {
+                    for (int jN = -1; jN < 2; ++jN){
+                        if ((iG + iN >= 0 && iG + iN < row) 
+                        && (jG + jN >= 0 && jG + jN < col)
+                        && (grid[iG+iN][jG+jN]))
+                            ++countLife;
+                    }
+                }
+                // substract 1 for the center cell
+                if (grid[iG][jG]) countLife -= 1;
+
+                // Rules of Life
+                // Cell dies due to lonliness or over population
+                if ((grid[iG][jG]) && (countLife < 2)
+                || (grid[iG][jG]) && (countLife > 3))
+                    futureGen[iG][jG] = false;
+ 
+                // A new cell is born
+                else if ((countLife == 3))
+                    futureGen[iG][jG] = true;
+ 
+                // Remains the same
+                else
+                    futureGen[iG][jG] = grid[iG][jG];
+            }
+        }
+
+        return futureGen;
+    }
+
     public static void main (String[] args) {
 
         // Input
@@ -59,46 +96,11 @@ public class gameOfLife {
         printGrid(grid);
 
         // nextGen
-        boolean[][] futureGen = newBooleanGrid(row, col);
-        
-        for (int iG = 0; iG < grid.length; ++iG) {
-            for (int jG = 0; jG < grid[row-1].length; ++jG) {
-                // iN indexes through the 3x3 neighbourhood
-                int countLife = 0;
-                for (int iN = -1; iN < 2; ++iN) {
-                    for (int jN = -1; jN < 2; ++jN){
-                        if ((iG + iN >= 0 && iG + iN < row) 
-                            && (jG + jN >= 0 && jG + jN < col)
-                            && (grid[iG+iN][jG+jN]))
-                            ++countLife;
-                    }
-                }
-                // substract 1 for the center cell
-                if (grid[iG][jG]) countLife -= 1;
-
-                // Rules of Life
-                // Cell dies due to lonliness or over population
-                if ((grid[iG][jG]) && (countLife < 2)
-                    || (grid[iG][jG]) && (countLife > 3))
-                    futureGen[iG][jG] = false;
- 
-                // A new cell is born
-                else if ((countLife == 3))
-                    futureGen[iG][jG] = true;
- 
-                // Remains the same
-                else
-                    futureGen[iG][jG] = grid[iG][jG];
-            }
-        }
+        boolean[][] futureGen = nextGen(grid, row, col);
 
         // print future Generation
         System.out.println("_______");
         System.out.println("Output:");
         printGrid(futureGen);
-
-        //System.out.println(countLife);
-
-
     }
 }
