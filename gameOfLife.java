@@ -63,30 +63,27 @@ public class gameOfLife {
         
         for (int iG = 0; iG < grid.length; ++iG) {
             for (int jG = 0; jG < grid[row-1].length; ++jG) {
-                // iC indexes through the 3x3 Cell
+                // iN indexes through the 3x3 neighbourhood
                 int countLife = 0;
-                for (int iC = -1; iC < 2; ++iC) {
-                    for (int jC = -1; jC < 2; ++jC){
-                        if ((iG + iC >= 0 && iG + iC < row) && (jG + jC >= 0 && jG + jC < col)){
+                for (int iN = -1; iN < 2; ++iN) {
+                    for (int jN = -1; jN < 2; ++jN){
+                        if ((iG + iN >= 0 && iG + iN < row) 
+                            && (jG + jN >= 0 && jG + jN < col)
+                            && (grid[iG+iN][jG+jN]))
                             ++countLife;
-                        }
                     }
                 }
-                System.out.println(countLife);
                 // substract 1 for the center cell
                 if (grid[iG][jG]) countLife -= 1;
 
                 // Rules of Life
-                // Cell is lonely and dies
-                if ((grid[iG][jG]) && (countLife < 2))
-                    futureGen[iG][jG] = false;
- 
-                // Cell dies due to over population
-                else if ((grid[iG][jG]) && (countLife > 3))
+                // Cell dies due to lonliness or over population
+                if ((grid[iG][jG]) && (countLife < 2)
+                    || (grid[iG][jG]) && (countLife > 3))
                     futureGen[iG][jG] = false;
  
                 // A new cell is born
-                else if ((grid[iG][jG]) && (countLife == 3))
+                else if ((countLife == 3))
                     futureGen[iG][jG] = true;
  
                 // Remains the same
