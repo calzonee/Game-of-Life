@@ -13,19 +13,12 @@ public class gameOfLife {
         return size;
     }
 
-    // initialise new boolean grid
-    public static boolean[][] newBooleanGrid(int row, int col) {
-        boolean[][] grid = new boolean[row][col];
-        return grid;
-    }
-
     // create pattern on grid 
-    public static boolean[][] addPattern(boolean[][] grid, int row, int col) {
+    public static boolean[][] addPattern(boolean[][] grid) {
         for (int i = 0; i < grid.length; ++i) {
-            for (int j = 0; j < grid[row-1].length; ++j) {
-                if(j % (i + 2) == 0){
+            for (int j = 0; j < grid[grid.length-1].length; ++j) {
+                if(j % (i + 2) == 0)
                     grid[i][j] = true;
-                }
             }
         }
         return grid; 
@@ -34,35 +27,44 @@ public class gameOfLife {
     // Method to print a grid
     public static void printGrid(boolean[][] grid) {
         for (boolean[] i : grid) {
-            for (boolean j : i) {
+            for (boolean j : i)
                 System.out.print(j ? "+" : ".");
-            }
             System.out.println("");
         }
     }
 
-    // Method will contain rules of Life
-    public static boolean[][] nextGen(boolean[][] grid, int row, int col) {
-        boolean[][] futureGen = newBooleanGrid(row, col);
-        for (int iG = 0; iG < grid.length; ++iG) {
-            for (int jG = 0; jG < grid[row-1].length; ++jG) {
-                // iN indexes through the 3x3 neighbourhood
+    // print next Generation
+    public static void printGenerations(boolean[][] grid, int generations) {
+        boolean[][] futureGen = nextGen(grid);
+        for (int i = 1; i <= generations; ++i) {
+            System.out.println("_____________");
+            System.out.println("Generation " + i + ":");
+            printGrid(futureGen);
+            futureGen = nextGen(futureGen);
+        }
+    }
+
+    // nextGen() contains rules of Life
+    public static boolean[][] nextGen(boolean[][] grid) {
+        boolean[][] futureGen = new boolean[grid.length][grid[0].length];
+        // loop through every cell
+        for (int iG = 0; iG < grid.length; ++iG) {         // rows
+            for (int jG = 0; jG < grid[iG].length; ++jG) { // columns
+                // indexing through every neighbour iN of the cell
                 int countLife = 0;
                 for (int iN = -1; iN < 2; ++iN) {
                     for (int jN = -1; jN < 2; ++jN){
-                        if ((iG + iN >= 0 && iG + iN < row) 
-                        && (jG + jN >= 0 && jG + jN < col)
-                        && (grid[iG+iN][jG+jN]))
+                        if (grid[(grid.length + iG + iN) % grid.length]
+                        [(grid[iG].length + jG + jN) % grid[iG].length])
                             ++countLife;
                     }
                 }
-                // substract 1 for the center cell
+                // subtract 1 for the center cell
                 if (grid[iG][jG]) countLife -= 1;
 
                 // Rules of Life
                 // Cell dies due to lonliness or over population
-                if ((grid[iG][jG]) && (countLife < 2)
-                || (grid[iG][jG]) && (countLife > 3))
+                if ((grid[iG][jG]) && (countLife < 2 || countLife > 3))
                     futureGen[iG][jG] = false;
  
                 // A new cell is born
@@ -74,7 +76,6 @@ public class gameOfLife {
                     futureGen[iG][jG] = grid[iG][jG];
             }
         }
-
         return futureGen;
     }
 
@@ -82,25 +83,18 @@ public class gameOfLife {
 
         // Input
         int[] size = getUserInput();
-        int row = size[0];
-        int col = size[1];
 
         // 2D array
-        boolean[][] grid = newBooleanGrid(row, col);
+        boolean[][] grid = new boolean[size[0]][size[1]];
         
-        // add pattern
-        addPattern(grid,row,col);
+        // add pattern and complete Gen 0
+        addPattern(grid);
 
         // print grid with pattern (first generation)
-        System.out.println("Input:");
+        System.out.println("Generation 0:");
         printGrid(grid);
 
         // nextGen
-        boolean[][] futureGen = nextGen(grid, row, col);
-
-        // print future Generation
-        System.out.println("_______");
-        System.out.println("Output:");
-        printGrid(futureGen);
+        printGenerations(grid, 2);
     }
 }
