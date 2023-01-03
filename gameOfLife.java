@@ -13,10 +13,13 @@ public class gameOfLife {
         return size;
     }
 
-    // create pattern on grid 
-    public static boolean[][] addPattern(boolean[][] grid) {
+    // create grid with pattern
+    public static boolean[][] gridPattern(int row, int col) {
+        // 2D empty array
+        boolean[][] grid = new boolean[row][col];
+        // adding the pattern
         for (int i = 0; i < grid.length; ++i) {
-            for (int j = 0; j < grid[grid.length-1].length; ++j) {
+            for (int j = 0; j < grid[i].length; ++j) {
                 if(j % (i + 2) == 0)
                     grid[i][j] = true;
             }
@@ -84,11 +87,8 @@ public class gameOfLife {
         // Input
         int[] size = getUserInput();
 
-        // 2D array
-        boolean[][] grid = new boolean[size[0]][size[1]];
-        
-        // add pattern and complete Gen 0
-        addPattern(grid);
+        // create grid with pattern
+        boolean[][] grid = gridPattern(size[0], size[1]);
 
         // print grid with pattern (first generation)
         System.out.println("Generation 0:");
