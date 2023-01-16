@@ -7,15 +7,15 @@ public class GameOfLife {
         int row = sc.nextInt();
         System.out.println("Enter number of columns: ");
         int col = sc.nextInt();
-        System.out.println("Enter number of Generations: ");
-        int gen = sc.nextInt();
-
+        // System.out.println("Enter number of Generations: ");
+        // int gen = sc.nextInt();
+        
         // ToDo: initialise Objects
         Grid life = new Grid(row, col);
         life.print();
         // for (int i = 0; i < gen; ++i) {
         //     System.out.println("Generation " + i + ":");
-            
+        //     life.print();
         //     life = nextGen(life);
         // }
     }
@@ -47,6 +47,5 @@ class Grid{
     }
 
     public void nextGen() {
-        
     }
 }
