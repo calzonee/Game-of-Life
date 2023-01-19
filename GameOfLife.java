@@ -7,17 +7,16 @@ public class GameOfLife {
         int row = sc.nextInt();
         System.out.println("Enter number of columns: ");
         int col = sc.nextInt();
-        // System.out.println("Enter number of Generations: ");
-        // int gen = sc.nextInt();
+        System.out.println("Enter number of Generations: ");
+        int gen = sc.nextInt();
         
         // ToDo: initialise Objects
         Grid life = new Grid(row, col);
-        life.print();
-        // for (int i = 0; i < gen; ++i) {
-        //     System.out.println("Generation " + i + ":");
-        //     life.print();
-        //     life = nextGen(life);
-        // }
+        for (int i = 0; i < gen; ++i) {
+            System.out.println("Generation " + i + ":");
+            life.print();
+            life.nextGen();
+        }
     }
 }
 
@@ -25,11 +24,11 @@ class Grid{
     boolean[][] grid;
 
     Grid(int row, int col) {
-        init(row, col);
-        // pattern(row, col);
+        // random(row, col);
+        pattern(row, col);
     }
 
-    public void init(int row, int col) {
+    public void random(int row, int col) {
         grid = new boolean[row][col];
         for (int i = 0; i < grid.length; ++i) {
             for (int j = 0; j < grid[i].length; ++j)
@@ -54,7 +53,36 @@ class Grid{
     }
 
     public void nextGen() {
+         // loop through every cell
+         for (int iG = 0; iG < grid.length; ++iG) {         // rows
+            for (int jG = 0; jG < grid[iG].length; ++jG) { // columns
 
+                // indexing through every neighbour iN of the cell
+                int countLife = 0;
+                for (int iN = -1; iN < 2; ++iN) {
+                    for (int jN = -1; jN < 2; ++jN){
+                        if (grid[(grid.length + iG + iN) % grid.length]
+                        [(grid[iG].length + jG + jN) % grid[iG].length])
+                            ++countLife;
+                    }
+                }
+                // subtract 1 for the center cell
+                if (grid[iG][jG]) countLife -= 1;
+
+                // Rules of Life
+                // Cell dies due to lonliness or over population
+                if ((grid[iG][jG]) && (countLife < 2 || countLife > 3))
+                    grid[iG][jG] = false;
+
+                // A new cell is born
+                else if ((countLife == 3))
+                    grid[iG][jG] = true;
+
+                // Remains the same
+                else
+                    grid[iG][jG] = grid[iG][jG];
+            }
+        }
     }
 }
 
