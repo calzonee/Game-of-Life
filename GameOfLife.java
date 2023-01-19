@@ -25,26 +25,23 @@ class Grid{
     boolean[][] grid;
 
     Grid(int row, int col) {
-        // init(row, col);
-        pattern(row, col);
+        init(row, col);
+        // pattern(row, col);
     }
 
     public void init(int row, int col) {
         grid = new boolean[row][col];
         for (int i = 0; i < grid.length; ++i) {
-            for (int j = 0; j < grid[i].length; ++j) {
-                if (Math.random() < 0.5)
-                    grid[i][j] = true;
-            }
+            for (int j = 0; j < grid[i].length; ++j)
+                grid[i][j] = Math.random() < 0.5 ? true : false;
         }
     }
 
     public void pattern(int row, int col){
         grid = new boolean[row][col];
         for (int i = 0; i < row; ++i) {
-            for (int j = 0; j < col; ++j) {
+            for (int j = 0; j < col; ++j)
                 grid[i][j] = j % (i + 2) == 0 ? true : false;
-            }
         }
     }
 
