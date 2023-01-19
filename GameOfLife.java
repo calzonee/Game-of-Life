@@ -25,7 +25,8 @@ class Grid{
     boolean[][] grid;
 
     Grid(int row, int col) {
-        init(row, col);
+        // init(row, col);
+        pattern(row, col);
     }
 
     public void init(int row, int col) {
@@ -34,6 +35,15 @@ class Grid{
             for (int j = 0; j < grid[i].length; ++j) {
                 if (Math.random() < 0.5)
                     grid[i][j] = true;
+            }
+        }
+    }
+
+    public void pattern(int row, int col){
+        grid = new boolean[row][col];
+        for (int i = 0; i < row; ++i) {
+            for (int j = 0; j < col; ++j) {
+                grid[i][j] = j % (i + 2) == 0 ? true : false;
             }
         }
     }
@@ -47,5 +57,10 @@ class Grid{
     }
 
     public void nextGen() {
+
     }
+}
+
+class Stone{
+
 }
