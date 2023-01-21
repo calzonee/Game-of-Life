@@ -9,12 +9,15 @@ public class GameOfLife {
         int col = sc.nextInt();
         System.out.println("Enter number of Generations: ");
         int gen = sc.nextInt();
-        
-        // ToDo: initialise Objects
+        System.out.println("Enter x to know the number of cells with x neighbours: ");
+        int x = sc.nextInt();
+
         Grid life = new Grid(row, col);
+
         for (int i = 0; i < gen; ++i) {
             System.out.println("Generation " + i + ":");
             life.print();
+            life.coordinates(row - 1, col - 1, x);
             life.nextGen();
         }
     }
@@ -22,7 +25,7 @@ public class GameOfLife {
 
 class Grid{
     boolean[][] grid;
-
+    
     Grid(int row, int col) {
         // random(row, col);
         pattern(row, col);
@@ -52,37 +55,46 @@ class Grid{
         }
     }
 
+    public int neighbours(int iG, int jG){
+        int n = 0;
+        for (int iN = -1; iN < 2; ++iN) {
+            for (int jN = -1; jN < 2; ++jN){
+                int i = (grid.length + iG + iN) % grid.length;
+                int j = (grid[iG].length + jG + jN) % grid[iG].length;
+                if (grid[i][j] && !(i == iG && j == jG))
+                    ++n;
+            }
+        }
+        return n;
+    }
+
     public void nextGen() {
+        boolean[][] tmp = new boolean[grid.length][grid[0].length];
          // loop through every cell
          for (int iG = 0; iG < grid.length; ++iG) {         // rows
             for (int jG = 0; jG < grid[iG].length; ++jG) { // columns
-
-                // indexing through every neighbour iN of the cell
-                int countLife = 0;
-                for (int iN = -1; iN < 2; ++iN) {
-                    for (int jN = -1; jN < 2; ++jN){
-                        if (grid[(grid.length + iG + iN) % grid.length]
-                        [(grid[iG].length + jG + jN) % grid[iG].length])
-                            ++countLife;
-                    }
-                }
-                // subtract 1 for the center cell
-                if (grid[iG][jG]) countLife -= 1;
-
+                int countLife = neighbours(iG, jG);
                 // Rules of Life
                 // Cell dies due to lonliness or over population
                 if ((grid[iG][jG]) && (countLife < 2 || countLife > 3))
-                    grid[iG][jG] = false;
-
+                    tmp[iG][jG] = false;
                 // A new cell is born
-                else if ((countLife == 3))
-                    grid[iG][jG] = true;
-
-                // Remains the same
-                else
-                    grid[iG][jG] = grid[iG][jG];
+                else if ((countLife == 3) || grid[iG][jG])
+                    tmp[iG][jG] = true;
             }
         }
+        grid = tmp;
+    }
+
+    public void coordinates(int iG, int jG, int x){
+        if (iG < 0)
+            return;
+        if (jG == 0)
+            coordinates(iG - 1, grid[jG].length - 1, x);
+        else
+            coordinates(iG, jG - 1, x);
+        if (neighbours(iG, jG) == x)
+            System.out.println("Coordinates: " + iG + " / " + jG);
     }
 }
 
