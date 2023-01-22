@@ -9,8 +9,8 @@ public class GameOfLife {
         int col = sc.nextInt();
         System.out.println("Enter number of Generations: ");
         int gen = sc.nextInt();
-        System.out.println("Enter x to output coordinates of cells with x neighbours: ");
-        int x = sc.nextInt();
+        // System.out.println("Enter x to output coordinates of cells with x neighbours: ");
+        // int x = sc.nextInt();
 
         Grid life = new Grid(row, col);
 
@@ -18,7 +18,7 @@ public class GameOfLife {
             System.out.println();
             System.out.println("Generation " + i + ":");
             life.print();
-            life.coordinates(row - 1, col - 1, x);
+            // life.coordinates(row - 1, col - 1, x);
             life.nextGen();
         }
     }
@@ -72,7 +72,6 @@ class Grid{
 
     public void nextGen() {
         int[][] tmp = new int[grid.length][grid[0].length];
-         // loop through every cell
          for (int iG = 0; iG < grid.length; ++iG) {         // rows
             for (int jG = 0; jG < grid[iG].length; ++jG) { // columns
                 int countLife = neighbours(iG, jG);
@@ -106,5 +105,13 @@ class Grid{
 }
 
 class Stone{
+    int age;
 
+    public void print() {}
+
+    public void countNeighbour() {}
+
+    public void isAlive(){}
+
+    public void computeNext() {}
 }
