@@ -25,93 +25,121 @@ public class GameOfLife {
 }
 
 class Grid{
-    int[][] grid;
+    Stone[][] grid;
     
     Grid(int row, int col) {
-        // random(row, col);
-        pattern(row, col);
+        random(row, col);
+        // pattern(row, col);
     }
 
     public void random(int row, int col) {
-        grid = new int[row][col];
+        grid = new Stone[row][col];
         for (int i = 0; i < grid.length; ++i) {
             for (int j = 0; j < grid[i].length; ++j)
-                grid[i][j] = Math.random() < 0.5 ? 1 : 0;
+                grid[i][j] = new Stone(Math.random() < 0.5 ? 1 : 0, i, j);
+                                       // evtl boolean, ein stein wird geboren oder nicht
         }
     }
 
     public void pattern(int row, int col){
-        grid = new int[row][col];
+        grid = new Stone[row][col];
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j)
-                grid[i][j] = j % (i + 2) == 0 ? 1 : 0;
+                grid[i][j] = new Stone(j % (i + 2) == 0 ? 1 : 0, i, j);
         }
     }
 
     public void print() {
-        String[] age = {" ", ".", "o", "O", "*"};
-        for (int[] i : grid) {
-            for (int j : i)
-                System.out.print(j > 3 ? age[4] : age[j]);
-            System.out.println("");
+        for (Stone[] i : grid) {
+            for (Stone j : i)
+                j.printStone();
+            System.out.println();
         }
     }
 
-    public int neighbours(int iG, int jG){
+    public void nextGen() {
+        for (int iG = 0; iG < grid.length; ++iG) {
+            for (int jG = 0; jG < grid[iG].length; ++jG) {
+                grid[iG][jG].computeNext(grid);
+            }
+        }
+        for (int iG = 0; iG < grid.length; ++iG) {
+            for (int jG = 0; jG < grid[iG].length; ++jG) {
+                grid[iG][jG].setNext();
+            }
+        }
+    }
+
+    int x_cell = 0; // überarbeiten
+    public void coordinates(int iG, int jG, int x){
+        if (iG < 0){
+            x_cell = 0;
+            return;
+        }
+        if (grid[iG][jG].countNeighbours(grid) == x){
+            ++x_cell;
+            System.out.println(x_cell + ". Coordinate: " + iG + " / " + jG);
+        }
+        if (jG == 0)
+            coordinates(iG - 1, grid[jG].length - 1, x);
+        else
+            coordinates(iG, jG - 1, x);
+
+    }
+}
+
+class Stone{
+    int age, row, col;
+    int nextAge;
+    // array aus 8 nachbarn 
+
+    public Stone(int n, int i, int j) {
+        age = n; //
+        row = i; // i,j kann durch array ersetzt werden
+        col = j;
+    }
+
+    public void printStone() {
+        String[] ageIndicator = {" ", ".", "o", "O", "*"};//
+        System.out.print(age > 3 ? ageIndicator[4] : ageIndicator[age]);
+    }
+
+    public int countNeighbours(Stone[][] grid) {
         int n = 0;
         for (int iN = -1; iN < 2; ++iN) {
             for (int jN = -1; jN < 2; ++jN){
-                int i = (grid.length + iG + iN) % grid.length;
-                int j = (grid[iG].length + jG + jN) % grid[iG].length;
-                if (grid[i][j] > 0 && !(i == iG && j == jG))
+                int i = (grid.length + row + iN) % grid.length;
+                int j = (grid[row].length + col + jN) % grid[row].length;
+                if (grid[i][j].isAlive() && !(i == row && j == col))
                     ++n;
             }
         }
         return n;
     }
 
-    public void nextGen() {
-        int[][] tmp = new int[grid.length][grid[0].length];
-         for (int iG = 0; iG < grid.length; ++iG) {         // rows
-            for (int jG = 0; jG < grid[iG].length; ++jG) { // columns
-                int countLife = neighbours(iG, jG);
-                // Rules of Life
-                // Cell dies due to lonliness or over population
-                if ((grid[iG][jG]) > 0 && (countLife < 2 || countLife > 3))
-                    tmp[iG][jG] = 0;
-                // A new cell is born
-                else if ((countLife == 3) || grid[iG][jG] > 0)
-                    tmp[iG][jG] = grid[iG][jG] + 1;
-            }
-        }
-        grid = tmp;
-    }
-
-    int x_cell = 0;
-    public void coordinates(int iG, int jG, int x){
-        if (iG < 0){
-            x_cell = 0;
-            return;
-        }
-        if (jG == 0)
-            coordinates(iG - 1, grid[jG].length - 1, x);
+    public void computeNext(Stone[][] grid) {
+        int n = countNeighbours(grid);
+        // A new cell is born
+        if ((n == 3) || isAlive() && n == 2)
+            survive();
+        // Cell dies due to lonliness or over population
         else
-            coordinates(iG, jG - 1, x);
-        if (neighbours(iG, jG) == x){
-            ++x_cell;
-            System.out.println(x_cell + ". Coordinate: " + iG + " / " + jG);
-        }
+            die();
     }
-}
 
-class Stone{
-    int age;
+    public void setNext() {
+        age = nextAge;
+    }
 
-    public void print() {}
+    public boolean isAlive() {
+        return age > 0;
+    }
 
-    public void countNeighbour() {}
+    public void die() {
+        nextAge = 0;
+    }
 
-    public void isAlive(){}
-
-    public void computeNext() {}
+    public void survive() {
+        nextAge = age + 1;
+    }
 }
